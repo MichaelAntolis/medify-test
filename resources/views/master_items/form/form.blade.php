@@ -1,4 +1,4 @@
-<form method="POST">
+<form method="POST" enctype="multipart/form-data">
     @csrf
     @if($method == 'edit')
     <div class="form-group">
@@ -9,29 +9,29 @@
 
     <div class="form-group">
         <label>Nama</label>
-        <input type="text" class="form-control" name="nama" required  value="{{$item->nama ?? ''}}">
+        <input type="text" class="form-control" name="nama" required value="{{$item->nama ?? ''}}">
     </div>
 
     <div class="form-group">
         <label>Harga Beli</label>
-        <input type="number" class="form-control" name="harga_beli" required  value="{{$item->harga_beli ?? ''}}">
+        <input type="number" class="form-control" name="harga_beli" required value="{{$item->harga_beli ?? ''}}">
     </div>
 
     <div class="form-group">
         <label>Laba (dalam persen)</label>
-        <input type="number" class="form-control" name="laba" required  value="{{$item->laba ?? ''}}">
+        <input type="number" class="form-control" name="laba" required value="{{$item->laba ?? ''}}">
     </div>
 
     @php $selected = $item->supplier ?? ''; @endphp
     <div class="form-group">
         <label>Supplier</label>
         <select class="form-control" required name="supplier">
-            <option @if($selected == '') selected @endif value="">--Pilih--</option>
-            <option @if($selected == 'Tokopaedi') selected @endif>Tokopaedi</option>
-            <option @if($selected == 'Bukulapuk') selected @endif>Bukulapuk</option>
-            <option @if($selected == 'TokoBagas') selected @endif>TokoBagas</option>
-            <option @if($selected == 'E Commurz') selected @endif>E Commurz</option>
-            <optio @if($selected == 'Blublu') selected @endif>Blublu</option>
+            <option @if($selected=='' ) selected @endif value="">--Pilih--</option>
+            <option @if($selected=='Tokopaedi' ) selected @endif>Tokopaedi</option>
+            <option @if($selected=='Bukulapuk' ) selected @endif>Bukulapuk</option>
+            <option @if($selected=='TokoBagas' ) selected @endif>TokoBagas</option>
+            <option @if($selected=='E Commurz' ) selected @endif>E Commurz</option>
+            <option @if($selected=='Blublu' ) selected @endif>Blublu</option>
         </select>
     </div>
 
@@ -39,15 +39,47 @@
     <div class="form-group">
         <label>Jenis</label>
         <select class="form-control" required name="jenis">
-            <option @if($selected == '') selected @endif value="">--Pilih--</option>
-            <option @if($selected == 'Obat') selected @endif>Obat</option>
-            <option @if($selected == 'Alkes') selected @endif>Alkes</option>
-            <option @if($selected == 'Matkes') selected @endif>Matkes</option>
-            <optio @if($selected == 'Umum') selected @endif>Umum</option>
-            <optio @if($selected == 'ATK') selected @endif>ATK</option>
+            <option @if($selected=='' ) selected @endif value="">--Pilih--</option>
+            <option @if($selected=='Obat' ) selected @endif>Obat</option>
+            <option @if($selected=='Alkes' ) selected @endif>Alkes</option>
+            <option @if($selected=='Matkes' ) selected @endif>Matkes</option>
+            <option @if($selected=='Umum' ) selected @endif>Umum</option>
+            <option @if($selected=='ATK' ) selected @endif>ATK</option>
         </select>
     </div>
 
-    <button class="btn btn-primary mt-3">Submit</button>
+    <div class="form-group mt-2">
+        <label>Kategori</label>
+        <div class="border p-2 rounded" style="max-height: 150px; overflow-y: auto">
+            @forelse($kategori_list as $kat)
+            <div class="form-check">
+                <input
+                    class="form-check-input" 
+                    type="checkbox" 
+                    name="kategori_ids[]" 
+                    id="kat_{{ $kat->id }}"
+                    value="{{ $kat->id }}"
+                    @if(in_array($kat->id, $selected_kategori)) checked @endif
+                >
+                <label class="form-check-label" for="kat_{{ $kat->id }}">
+                    [{{ $kat->kode }}] {{ $kat->nama }}
+                </label>
+            </div>
+            @empty
+            <span class="text-muted">Belum ada kategori. <a href="{{ url('kategori-items/form/new') }}" target="_blank">Buat kategori baru</a></span>
+            @endforelse
+        </div>
+    </div>
 
+    <div class="form-group mt-2">
+        <label>Foto</label>
+        <input type="file" class="form-control" name="foto" accept="image/*">
+        @if(!empty($item->foto))
+        <div class="mt-2">
+            <img src="{{ asset($item->foto) }}" width="150" alt="Preview Foto">
+        </div>
+        @endif
+    </div>
+
+    <button class="btn btn-primary mt-3">Submit</button>
 </form>
